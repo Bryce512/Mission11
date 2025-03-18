@@ -22,7 +22,7 @@ function booklist() {
       const data = await response.json();
       setBooks(data.bookList);
       setTotalResults(data.totalBooks);
-      setTotalPages(Math.ceil(data.totalBooks / resultsPerPage));
+      setTotalPages(Math.ceil(totalResults/ resultsPerPage));
     };
 
     fetchBooks();
