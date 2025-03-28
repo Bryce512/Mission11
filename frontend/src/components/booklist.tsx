@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { Book } from "../types/books";
+import { cartItem } from "../types/cartItem";
+import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
 
 function booklist(
   {selectedCategories} : {selectedCategories: string[] }
@@ -10,6 +13,7 @@ function booklist(
   const [totalResults, setTotalResults] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const {addToCart} = useCart();
 
 
   // Filter books based on the search term
@@ -20,7 +24,6 @@ function booklist(
 
   useEffect(() => {
   const fetchBooks = async () => {
-      console.log("selected Cat:",{selectedCategories})
       const catParams = selectedCategories.map((c) => 
       `categories=${encodeURIComponent(c)}`)
       .join("&")
@@ -36,6 +39,19 @@ function booklist(
 
     fetchBooks();
   }, [resultsPerPage, page, selectedCategories, totalResults]);
+
+  const handleAddToCart = (book: Book) => {
+    const newItem: cartItem = {
+      bookId: book.bookId,
+      bookPrice: book.price,
+      bookTitle: book.title,
+      totalPrice: book.price, // Assuming totalPrice is the same as price for now
+      quantity: 1 // Default quantity set to 1
+    };
+    addToCart(newItem);
+  };
+  
+
 
   return (
     <>
@@ -77,6 +93,7 @@ function booklist(
                 {book.isbn}
               </li>
             </ul>
+            <button className="btn btn-success" onClick={() => {handleAddToCart(book)}}>Add to Cart</button>
           </div>
         </div>
       ))}

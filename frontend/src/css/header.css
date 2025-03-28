@@ -6,10 +6,18 @@
   padding: 0.5rem 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 100%;
-  position: sticky;
+  position: fixed; /* Change to fixed instead of sticky */
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
+  height: 9%;
   margin-bottom: 3%;
+}
+
+/* Create a spacer to push content below the fixed header */
+.header-spacer {
+  height: 8vh; /* Adjust this to match your header height */
 }
 
 .header h1 {
