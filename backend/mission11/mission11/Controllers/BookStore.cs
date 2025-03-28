@@ -15,19 +15,37 @@ public class BookStoreController : ControllerBase
     }
 
     [HttpGet("AllBooks")]
-    public OkObjectResult GetBooks(int pageNum , int resultsPerPage)
+    public IActionResult GetBooks(int pageNum , int resultsPerPage, [FromQuery] List<string>? categories = null)
     {
-        var books =  _context.Books
+        var query = _context.Books.AsQueryable();
+
+        if (categories != null && categories.Any()) {
+            query = query.Where(c => categories.Contains(c.Category));
+        }
+
+        var totalBooks = query.Count();
+
+        var books =  query
             .Skip((pageNum-1) * resultsPerPage)
             .Take(resultsPerPage)
             .ToList();
         
-        var totalBooks = _context.Books.Count();
 
         return Ok(new
         {
             bookList = books,
             totalBooks = totalBooks
         });
+    }
+
+    [HttpGet ("getCategories")]
+    public List<string> GetCategories()
+    {
+        var categories = _context.Books
+            .Select(x => x.Category)
+            .Distinct()
+            .ToList();
+
+        return categories;
     }
 }
