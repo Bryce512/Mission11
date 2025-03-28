@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Book } from "../types/books";
 import { cartItem } from "../types/cartItem";
 import { useCart } from "../context/CartContext";
-import { useNavigate } from "react-router-dom";
 
 function booklist(
   {selectedCategories} : {selectedCategories: string[] }
@@ -13,6 +12,8 @@ function booklist(
   const [totalResults, setTotalResults] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
   const {addToCart} = useCart();
 
 
@@ -46,8 +47,17 @@ function booklist(
       bookPrice: book.price,
       bookTitle: book.title,
       totalPrice: book.price, // Assuming totalPrice is the same as price for now
-      quantity: 1 // Default quantity set to 1
+      quantity: 1, // Default quantity set to 1
     };
+    // Set the alert message and show it
+    setAlertMessage(`${book.title} has been added to the cart!`);
+    setShowAlert(true);
+
+    // Hide the alert after 3 seconds
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 3000);
+
     addToCart(newItem);
   };
   
@@ -55,6 +65,19 @@ function booklist(
 
   return (
     <>
+      {showAlert && (
+        <div
+          className="alert alert-success alert-dismissible fade show"
+          role="alert"
+        >
+          {alertMessage}
+          <button
+            type="button"
+            className="btn-close"
+            onClick={() => setShowAlert(false)}
+          ></button>
+        </div>
+      )}
       <input
         type="text"
         placeholder="Search by book name..."
@@ -93,7 +116,14 @@ function booklist(
                 {book.isbn}
               </li>
             </ul>
-            <button className="btn btn-success" onClick={() => {handleAddToCart(book)}}>Add to Cart</button>
+            <button
+              className="btn btn-success"
+              onClick={() => {
+                handleAddToCart(book);
+              }}
+            >
+              Add to Cart
+            </button>
           </div>
         </div>
       ))}
