@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react"
-import { Book } from "./types/books"
+import { useEffect, useState } from "react";
+import { Book } from "../types/books";
 
-function booklist() {
+function booklist(
+  {selectedCategories} : {selectedCategories: string[] }
+) {
   const [books, setBooks] = useState<Book[]>([]);
   const [page, setPage] = useState(1);
   const [resultsPerPage, setResultsPerPage] = useState(5);
@@ -9,28 +11,34 @@ function booklist() {
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
 
+
   // Filter books based on the search term
   const filteredBooks = books.filter((book) =>
     book.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+
   useEffect(() => {
-    const fetchBooks = async () => {
+  const fetchBooks = async () => {
+      console.log("selected Cat:",{selectedCategories})
+      const catParams = selectedCategories.map((c) => 
+      `categories=${encodeURIComponent(c)}`)
+      .join("&")
+
       const response = await fetch(
-        `https://localhost:5000/BookStore/AllBooks?pageNum=${page}&resultsPerPage=${resultsPerPage}`
+        `https://localhost:5000/BookStore/AllBooks?pageNum=${page}&resultsPerPage=${resultsPerPage}${selectedCategories.length ? `&${catParams}`: ''}`
       );
       const data = await response.json();
       setBooks(data.bookList);
       setTotalResults(data.totalBooks);
-      setTotalPages(Math.ceil(totalResults/ resultsPerPage));
+      setTotalPages(Math.ceil(totalResults / resultsPerPage));
     };
 
     fetchBooks();
-  }, [resultsPerPage, page]);
+  }, [resultsPerPage, page, selectedCategories, totalResults]);
 
   return (
     <>
-      <h1>Booklist</h1>
       <input
         type="text"
         placeholder="Search by book name..."
@@ -107,4 +115,4 @@ function booklist() {
   );
 }
 
-export default booklist
+export default booklist;

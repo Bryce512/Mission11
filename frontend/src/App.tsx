@@ -1,13 +1,12 @@
-import './App.css'
-import Booklist from './booklist'
+import "./App.css";
+import Home from "./screens/Home";
 
 function App() {
-
   return (
     <>
-      <Booklist />
+      <Home />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
