@@ -1,24 +1,15 @@
-import { addBook } from "../api/BooklistAPI";
+import { updateBook } from "../api/BooklistAPI";
 import { Book } from "../types/books";
 import { useState } from "react";
 
-interface newBookFormProps {
+interface editBookFormProps {
+  book: Book;
   onSuccess: () => void;
   onCancel: () => void;
 };
 
-function NewBookForm({onSuccess, onCancel}: newBookFormProps) {
-  const [formData, setFormData] = useState<Book>({  
-    bookId: 0,
-    title: '',
-    author: '',
-    publisher: '',
-    isbn: '',
-    classification: '',
-    category: '',
-    pageCount: 0,
-    price: 0,
-  })
+function EditBookForm({book, onSuccess, onCancel}: editBookFormProps) {
+  const [formData, setFormData] = useState<Book>({...book});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({...formData, [e.target.name]: e.target.value });
@@ -26,14 +17,14 @@ function NewBookForm({onSuccess, onCancel}: newBookFormProps) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => { 
     e.preventDefault();
-    await addBook(formData);
+    await updateBook(formData.bookId, formData);
     onSuccess();
   }
 
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <h2>Add New Book</h2>
+        <h2>Edit {formData.title}</h2>
         <label>Book Title: <input type="text" name="title" value={formData.title} onChange={handleChange}/></label>
         <label>Author: <input type="text" name="author" value={formData.author} onChange={handleChange}/></label>
         <label>Publisher: <input type="text" name="publisher" value={formData.publisher} onChange={handleChange}/></label>
@@ -42,7 +33,7 @@ function NewBookForm({onSuccess, onCancel}: newBookFormProps) {
         <label>Category: <input type="text" name="category" value={formData.category} onChange={handleChange}/></label>
         <label>Page Count: <input type="number" name="pageCount" value={formData.pageCount} onChange={handleChange}/></label>
         <label>Price: <input type="number" name="price" value={formData.price} onChange={handleChange}/></label>
-        <button type="submit">Add Book</button>
+        <button type="submit">Update</button>
         <button type="reset" onClick={onCancel}>Cancel</button>
       </form>
 
@@ -51,4 +42,4 @@ function NewBookForm({onSuccess, onCancel}: newBookFormProps) {
 
 }
 
-export default NewBookForm;
+export default EditBookForm;

@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { fetchBooks } from "../api/BooklistAPI";
+import { deleteBook, fetchBooks } from "../api/BooklistAPI";
 import { Book } from "../types/books";
 import '../css/adminBooklist.css';
 import Pagination from "../components/pagination";
+import NewBookForm from "../components/newBookForm";
+import EditBookForm from "../components/editBookForm";
 
 
 
@@ -13,6 +15,8 @@ function AdminBooklist() {
   const [page, setPage] = useState(1);
   const [resultsPerPage, setResultsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(0);
+  const [showForm, setShowForm] = useState(false);
+  const [editingBook, setEditingBook] = useState<Book | null>(null);
 
   useEffect(() => {
     const loadBooks = async () => {
@@ -28,6 +32,18 @@ function AdminBooklist() {
     }; loadBooks();
   }, [page, resultsPerPage]);
 
+  const handleDelete = async (bookId: number) => {
+    if (window.confirm("Are you sure you want to delete this book?")) {
+      try {
+        await deleteBook(bookId);
+        setBooks((prevBooks) => prevBooks.filter((book) => book.bookId !== bookId));
+        setTotalPages(Math.ceil((totalPages - 1) / resultsPerPage));
+      } catch (error) {
+        setError((error as Error).message);
+      }
+    }
+  };
+
     if (loading) {
       return <p>Loading...</p>;
     }
@@ -38,6 +54,26 @@ function AdminBooklist() {
   return (
     <>
       <h1>Admin Library</h1>
+
+      {!showForm && (
+        <button className="btn btn-success mb-3" onClick={() => setShowForm(true)}>Add Book</button>
+      )}
+
+      {showForm && (
+        <NewBookForm onSuccess={() => {setShowForm(false); fetchBooks(page, resultsPerPage,[])
+          .then((data) =>
+            setBooks(data.books));
+          }} onCancel={() => setShowForm(false)} />
+      )}  
+
+      {editingBook && (
+        <EditBookForm  book={editingBook} onSuccess={() => {
+          setEditingBook(null);
+          fetchBooks(page, resultsPerPage,[])
+          }} onCancel={() => setEditingBook(null)} />
+      )}
+
+
       <table className="table-auto table table-striped table-bordered">
         <thead className="table-dark">
           <tr>
@@ -62,10 +98,14 @@ function AdminBooklist() {
               <td className="border px-4 py-2">${book.price}</td>
               <td className="border px-4 py-2">{book.publisher}</td>
               <td>
-                <button className="btn-blue text-white px-4 py-2 rounded btn-edit btn-small">
+                <button className="btn-blue mb-2 text-white px-4 py-2 rounded btn-edit btn-small"
+                  onClick={() => {
+                    setEditingBook(book);
+                  }}>
                   Edit
                 </button>
-                <button className="btn-red text-white px-4 py-2 rounded ml-2 btn-small">
+                <button className="btn-red text-white px-4 py-2 rounded ml-2"
+                  onClick={() => handleDelete(book.bookId)}>
                   Delete
                 </button>
               </td>

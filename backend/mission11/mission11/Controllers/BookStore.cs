@@ -49,11 +49,48 @@ public class BookStoreController : ControllerBase
         return categories;
     }
 
-    [HttpGet("AddBook")]
+    [HttpPost("AddBook")]
     public IActionResult AddBook([FromBody] Book newBook)
     {
         _context.Books.Add(newBook);
         _context.SaveChanges();
         return Ok(newBook);
     }
+
+    [HttpDelete("DeleteBook/{id}")]
+    public IActionResult DeleteBook(int id)
+    {
+        var book = _context.Books.Find(id);
+        if (book == null)
+        {
+            return NotFound();
+        }
+
+        _context.Books.Remove(book);
+        _context.SaveChanges();
+        return Ok(book);
+    }
+
+    [HttpPut("UpdateBook/{id}")]
+    public IActionResult UpdateBook(int id,[FromBody] Book updatedBook)
+    {
+        var book = _context.Books.Find(id);
+        if (book == null)
+        {
+            return NotFound();
+        }
+        book.Title = updatedBook.Title;
+        book.Author = updatedBook.Author;
+        book.Category = updatedBook.Category;
+        book.Price = updatedBook.Price;
+        book.Classification = updatedBook.Classification;
+        book.Isbn = updatedBook.Isbn;
+        book.Publisher = updatedBook.Publisher;
+        book.PageCount = updatedBook.PageCount;
+
+        _context.Books.Update(book);
+        _context.SaveChanges();
+        return Ok(book);
+    }
+        
 }

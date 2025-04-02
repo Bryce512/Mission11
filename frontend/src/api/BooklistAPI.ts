@@ -4,6 +4,7 @@ interface fetchBooksResponse {
   books: Book[];
   totalNumBooks: number;
 }
+const API_URL = "https://localhost:5000/BookStore";
 
 export const fetchBooks = async (
   page: number,
@@ -16,7 +17,8 @@ export const fetchBooks = async (
         .join("&");
   
       const response = await fetch(
-        `https://localhost:5000/BookStore/AllBooks?pageNum=${page}&resultsPerPage=${resultsPerPage}${selectedCategories.length ? `&${catParams}`: ''}`);
+        `${API_URL}/AllBooks?pageNum=${page}&resultsPerPage=${resultsPerPage}${selectedCategories.length ? `&${catParams}` : ""}`
+      );
     
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -30,21 +32,60 @@ export const fetchBooks = async (
   }
 }
 
-export const addBook = async (book: Book): Promise<void> => {
+export const addBook = async (newBook: Book): Promise<Book> => {
   try {
-    const response = await fetch("https://localhost:5000/BookStore/AddBook", {
+    const response = await fetch(`${API_URL}/AddBook`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(book),
+      body: JSON.stringify(newBook),
     });
-
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    return await response.json();
   } catch (error) {
     console.error("Error adding book:", error);
     throw error;
   }
 };
+
+export const updateBook = async (
+  bookId: number,
+  updatedBook: Book
+): Promise<Book> => {
+  try {
+    const response = await fetch(`${API_URL}/UpdateBook/${bookId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedBook),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating book:", error);
+    throw error;
+  }
+
+}
+
+export const deleteBook = async (bookId: number): Promise<void> => {
+  try {
+    const response = await fetch(`${API_URL}/DeleteBook/${bookId}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error deleting book:", error);
+    throw error;
+  }
+}
