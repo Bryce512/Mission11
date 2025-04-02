@@ -5,6 +5,7 @@ import '../css/adminBooklist.css';
 import Pagination from "../components/pagination";
 import NewBookForm from "../components/newBookForm";
 import EditBookForm from "../components/editBookForm";
+import Header from "../components/Header";
 
 
 
@@ -53,6 +54,7 @@ function AdminBooklist() {
 
   return (
     <>
+    <Header />
       <h1>Admin Library</h1>
 
       {!showForm && (
