@@ -30,7 +30,7 @@ function AdminBooklist() {
         setLoading(false);
       }
     }; loadBooks();
-  }, [page, resultsPerPage]);
+  }, [page, resultsPerPage, showForm, editingBook]);
 
   const handleDelete = async (bookId: number) => {
     if (window.confirm("Are you sure you want to delete this book?")) {
@@ -70,6 +70,8 @@ function AdminBooklist() {
         <EditBookForm  book={editingBook} onSuccess={() => {
           setEditingBook(null);
           fetchBooks(page, resultsPerPage,[])
+          .then((data) =>
+            setBooks(data.books));
           }} onCancel={() => setEditingBook(null)} />
       )}
 
