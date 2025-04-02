@@ -25,3 +25,5 @@ obj*
 *.njsproj
 *.sln
 *.sw?
+backend/mission11/mission11/publish/
+backend/mission11/mission11/obj
