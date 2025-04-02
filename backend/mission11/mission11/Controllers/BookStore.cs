@@ -33,8 +33,8 @@ public class BookStoreController : ControllerBase
 
         return Ok(new
         {
-            bookList = books,
-            totalBooks = totalBooks
+            books = books,
+            totalNumBooks = totalBooks
         });
     }
 
@@ -47,5 +47,13 @@ public class BookStoreController : ControllerBase
             .ToList();
 
         return categories;
+    }
+
+    [HttpGet("AddBook")]
+    public IActionResult AddBook([FromBody] Book newBook)
+    {
+        _context.Books.Add(newBook);
+        _context.SaveChanges();
+        return Ok(newBook);
     }
 }
