@@ -2,7 +2,7 @@ import "./App.css";
 import AdminBooklist from "./screens/adminBooklist";
 import Cart from "./screens/Cart";
 import Home from "./screens/Home";
-import { BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import { HashRouter as Router, Routes, Route} from 'react-router-dom'
 
 function App() {
   return (
